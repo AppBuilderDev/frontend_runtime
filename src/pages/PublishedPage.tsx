@@ -7,7 +7,7 @@ export function PublishedPage() {
   if (state.loading)
     return (
       <main className="screen-message" role="status">
-        Cargando página?
+        Cargando página...
       </main>
     );
   if (state.missing)
