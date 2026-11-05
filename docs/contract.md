@@ -17,3 +17,9 @@ GET /api/pages devuelve borradores administrativos. PUT con status=draft guarda 
 Extraer contratos, esquemas de validación, renderizador y pruebas de conformidad a un paquete privado `@frontend-builder/contracts` con SemVer, consumido por cada repositorio mediante una versión fijada. Añadir schemaVersion en la persistencia/respuestas antes de cambiar el formato, migraciones explícitas, matriz de compatibilidad y CI de conformidad. Mientras tanto, mantener estos archivos equivalentes y revisar cambios coordinadamente. El editor no forma parte del paquete compartido.
 
 No se implementa federación de módulos: Design y Runtime son aplicaciones desplegables independientes que comparten datos vía HTTP. Un futuro microfrontend de componentes puede registrarse en el bootstrap, con manifest y versiones verificadas.
+
+## Estilos de distribución y bloques
+
+Container y Card admiten display, flexDirection, flexWrap, alignItems, justifyContent, gap y gridTemplateColumns sobre el contenedor de hijos. Todos los componentes admiten espaciado por lado mediante paddingTop/Right/Bottom/Left y marginTop/Right/Bottom/Left; los lados explícitos prevalecen sobre el valor general. Las propiedades se interpretan con la misma lista permitida y filtrado que en Design.
+
+Los bloques reutilizables se insertan en Design como copias completas con nuevos IDs. Runtime consume esas copias dentro del contrato de página existente, sin consultar la biblioteca ni depender de Craft.js.
