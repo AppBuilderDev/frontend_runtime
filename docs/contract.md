@@ -23,3 +23,9 @@ No se implementa federación de módulos: Design y Runtime son aplicaciones desp
 Container y Card admiten display, flexDirection, flexWrap, alignItems, justifyContent, gap y gridTemplateColumns sobre el contenedor de hijos. Todos los componentes admiten espaciado por lado mediante paddingTop/Right/Bottom/Left y marginTop/Right/Bottom/Left; los lados explícitos prevalecen sobre el valor general. Las propiedades se interpretan con la misma lista permitida y filtrado que en Design.
 
 Los bloques reutilizables se insertan en Design como copias completas con nuevos IDs. Runtime consume esas copias dentro del contrato de página existente, sin consultar la biblioteca ni depender de Craft.js.
+
+### Alineación y padding de contenedores
+
+`justifyItems` permite alinear horizontalmente los elementos de una cuadrícula. `textAlign` mantiene la semántica de texto heredable; una propiedad explícita en un hijo tiene prioridad sobre la heredada. La posición de componentes se configura mediante los ejes de distribución.
+
+En Container/Card, padding y sus valores por lado se aplican al contenedor real de los hijos, reemplazando el padding predeterminado. El margen sigue siendo externo. No se cambia el formato de los datos guardados.
