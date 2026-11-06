@@ -1,30 +1,26 @@
-# Frontend Builder · Runtime
+# AppBuilderDev · Runtime
 
-Aplicación independiente React, TypeScript estricto, Vite, React Router y Tailwind CSS 4. Node 22.13+.
+Rama `build/inventario`. Ejecuta páginas publicadas y componentes de datos del builder. React, TypeScript y Vite. Usar Node 24 LTS.
 
 ```powershell
 npm ci
-Copy-Item .env.example .env
 npm run dev
 ```
 
-Abrir http://localhost:5174/inicio después de crear y guardar esa página en el editor de Design. Guardar también publica, sin una acción adicional. Iniciar la API desde frontend_design con `npm run api` (puerto 3001). `VITE_API_URL` configura la URL HTTP del backend; por defecto http://localhost:3001. Reiniciar Vite al cambiar .env. Las variables VITE_* son públicas.
+Iniciar primero la API del repositorio `frontend_design` (`npm run dev:all`). Runtime utiliza http://localhost:5174 y el proxy `/api/v1` apunta a http://127.0.0.1:3001. Para cambiarlo, definir `PLATFORM_API_TARGET`. En producción configurar un proxy inverso equivalente y HTTPS.
 
-Una única ruta comodín resuelve cualquier pathname mediante GET /api/public/pages/by-path?path=…. Admite rutas anidadas. Solo obtiene copias publicadas; devuelve una vista 404 para páginas inexistentes o sin un primer guardado en el editor. Incluye carga, reintento por errores HTTP/conexión y aviso para componentes desconocidos. Las actualizaciones aparecen al recargar después de guardar en Design. La ruta raíz no redirige automáticamente a inicio.
+Las páginas nuevas se abren en `/p/{projectId}/{ruta}` desde Design. Requieren sesión y pertenencia al proyecto. Ambos frontends deben usar el mismo host para compartir la cookie. Si no hay sesión se solicita iniciar sesión. La navegación muestra las páginas publicadas, y los lectores no pueden crear ni modificar registros.
 
-```powershell
-npm run build
-npm run lint
-npm test
-npm run preview
-```
+`DataForm`, `DataTable` y `DataDetail` consumen los servicios propios del proyecto con validación en servidor y revisión en actualizaciones. Los importes se almacenan como centavos enteros. El contrato publicado conserva una copia de sus definiciones de datos; un borrador no altera la publicación.
 
-Build en dist/. Configurar fallback a index.html para rutas SPA en el hosting. Las pruebas de integración de navegador que abarcan ambas aplicaciones se ejecutan desde frontend_design (`npm run test:e2e`).
+- `src/pages/ProjectPage.tsx`: sesión, navegación y páginas del proyecto.
+- `src/components/renderer.tsx`: renderizado declarativo y estilos.
+- `src/components/dataComponents.tsx`: componentes conectados y selección compartida.
+- `src/models`: contratos compartidos con Design.
+- `src/services/platformHttp.ts`: solicitudes autenticadas.
 
-src/models define el contrato validado con Zod; src/components contiene el registro y renderizador extensible, con tipos iniciales Container, Heading, Paragraph, Button, Input y Card. `registerComponent` permite añadir componentes en el arranque. No se ejecuta JSX ni HTML almacenado. No hay imports del repositorio Design. Ver [contrato y estrategia de paquete compartido](docs/contract.md).
+Las rutas anteriores fuera de `/p` conservan el lector antiguo, que requiere habilitar expresamente la API legacy en desarrollo. Los JSON anteriores no se migran automáticamente.
 
-La API actual es exclusivamente de desarrollo. Antes de desplegar el servicio se requiere autenticación y autorización administrativas y una persistencia de producción. Runtime solo consume el endpoint público.
+Validación: `npm run build`, `npm run lint`, `npm test`, `npm run format:check`. El recorrido conjunto de navegador se ejecuta desde Design con `npm run test:e2e`.
 
-## Formato y estructura
-
-`npm run format` aplica Prettier y `npm run format:check` verifica la indentación (dos espacios), comillas simples y finales de línea LF. .editorconfig fija UTF-8. App.tsx contiene solo rutas; las páginas, componentes, hooks, modelos y servicios se mantienen separados.
+[Decisiones y alcance](docs/build-plan.md). Las mejoras de stock, movimientos, roles operativos y colaboración en tiempo real corresponden a entregas posteriores.
