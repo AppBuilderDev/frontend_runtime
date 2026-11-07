@@ -45,16 +45,20 @@ export function ProjectPage() {
     if (!session) return;
     const controller = new AbortController();
 
-    Promise.all([
-      platformRequest<Navigation>('/runtime/projects/' + projectId + '/navigation', {
-        signal: controller.signal,
-      }),
-      platformRequest(
-        '/runtime/projects/' + projectId + '/pages/by-path?path=' + encodeURIComponent('/' + tail),
-        { signal: controller.signal },
-      ).then((value) => pageSchema.parse(value)),
-    ])
-
+    platformRequest<Navigation>('/runtime/projects/' + projectId + '/navigation', {
+      signal: controller.signal,
+    })
+      .then(async (nav) => {
+        const route = tail || nav.pages[0]?.code || '';
+        const value = await platformRequest(
+          '/runtime/projects/' +
+            projectId +
+            '/pages/by-path?path=' +
+            encodeURIComponent('/' + route),
+          { signal: controller.signal },
+        );
+        return [nav, pageSchema.parse(value)] as const;
+      })
       .then(([nav, p]) => {
         setNavigation(nav);
         setPage(p);
@@ -88,7 +92,9 @@ export function ProjectPage() {
               }
               key={p.code}
               to={'/p/' + projectId + '/' + p.code}
-              onClick={() => setLoading(true)}
+              onClick={() => {
+                if (tail !== p.code) setLoading(true);
+              }}
             >
               {p.name}
             </Link>

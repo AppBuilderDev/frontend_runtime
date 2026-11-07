@@ -23,4 +23,4 @@ Las rutas anteriores fuera de `/p` conservan el lector antiguo, que requiere hab
 
 Validación: `npm run build`, `npm run lint`, `npm test`, `npm run format:check`. El recorrido conjunto de navegador se ejecuta desde Design con `npm run test:e2e`.
 
-[Decisiones y alcance](docs/build-plan.md). Las mejoras de stock, movimientos, roles operativos y colaboración en tiempo real corresponden a entregas posteriores.
+[Decisiones y alcance](docs/build-plan.md). El componente `Inventory` permite consultar existencias e historial y registrar movimientos según el permiso operativo, independiente del acceso de construcción. Las solicitudes pendientes se conservan por pestaña para reintentar sin duplicación. La colaboración en tiempo real sigue pendiente. [Guía de inventario y permisos](docs/inventory-operations.md).
