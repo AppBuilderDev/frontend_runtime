@@ -134,6 +134,7 @@ export function ProjectPage() {
             key={page.id + ':' + page.publicationVersion}
             projectId={projectId}
             entities={page.entities ?? []}
+            operations={page.operations ?? []}
             canWrite={navigation.project.role !== 'reader'}
           >
             <main className="public-page">
