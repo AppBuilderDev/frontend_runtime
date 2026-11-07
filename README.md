@@ -26,3 +26,5 @@ Validación: `npm run build`, `npm run lint`, `npm test`, `npm run format:check`
 [Decisiones y alcance](docs/build-plan.md). El componente `Inventory` permite consultar existencias e historial y registrar movimientos según el permiso operativo, independiente del acceso de construcción. Las solicitudes pendientes se conservan por pestaña para reintentar sin duplicación. La colaboración en tiempo real sigue pendiente. [Guía de inventario y permisos](docs/inventory-operations.md).
 
 El componente `ServiceForm` ejecuta servicios propios publicados con entradas tipadas y reintentos idempotentes. Cada página conserva la versión de su contrato; las nuevas publicaciones del servicio no cambian la página hasta republicarla. [Servicios configurables](docs/configurable-services.md).
+
+El componente `ApiQuery` consulta conexiones externas publicadas a través del backend y muestra únicamente los campos del contrato. Runtime utiliza producción; no recibe las credenciales del proveedor. [Guía de conexiones](docs/external-connections.md).
