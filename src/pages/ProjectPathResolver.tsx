@@ -1,11 +1,13 @@
+import { ProjectPage } from './ProjectPage';
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import type { PlatformSession } from '../models/data';
 import { ApiError, platformRequest } from '../services/platformHttp';
-import { RuntimeLogin } from './ProjectPage';
+import { RuntimeLogin } from '../components/RuntimeLogin';
 
 type Match = {
   projectId: string;
+  slug?: string;
   project: string;
   organization: string;
   name: string;
@@ -51,7 +53,7 @@ export function ProjectPathResolver() {
     const controller = new AbortController();
     const projects = [
       ...new Map(
-        [...session.projects, ...(session.applications ?? [])]
+        [...session.projects, ...(session?.applications ?? [])]
           .filter((project) => !project.archived)
           .map((project) => [project.id, project]),
       ).values(),
@@ -68,6 +70,7 @@ export function ProjectPathResolver() {
             .map((page) => ({
               ...page,
               projectId: project.id,
+              slug: project.slug,
               project: project.name,
               organization: project.organization,
             }));
@@ -102,6 +105,17 @@ export function ProjectPathResolver() {
       </main>
     );
   if (session === null) return <RuntimeLogin onLogin={setSession} />;
+  const projects = [...(session?.projects ?? []), ...(session?.applications ?? [])];
+  const [slug, ...segments] = (code ?? '').split('/');
+  const scoped = projects.find((project) => !project.archived && project.slug === slug);
+  if (scoped)
+    return (
+      <ProjectPage
+        key={scoped.id}
+        resolvedProjectId={scoped.id}
+        resolvedCode={segments.join('/')}
+      />
+    );
   const error = authError || (resolution?.path === path ? resolution.error : '');
   if (error)
     return (
@@ -118,8 +132,7 @@ export function ProjectPathResolver() {
       </main>
     );
   const to = (match: Match) =>
-    '/p/' +
-    encodeURIComponent(match.projectId) +
+    (match.slug ? '/' + match.slug : '/p/' + encodeURIComponent(match.projectId)) +
     '/' +
     match.code +
     location.search +

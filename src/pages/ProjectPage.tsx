@@ -1,7 +1,8 @@
-import { Eye, EyeOff, ShieldCheck } from 'lucide-react';
-import { useEffect, useState, type FormEvent } from 'react';
+import { RuntimeLogin } from '../components/RuntimeLogin';
+import { RuntimeHeader } from '../components/RuntimeHeader';
+import { useEffect, useState } from 'react';
 
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useParams } from 'react-router-dom';
 
 import { DataProvider } from '../components/dataComponents';
 
@@ -15,9 +16,14 @@ import { ApiError, platformRequest } from '../services/platformHttp';
 
 type Navigation = { project: ProjectAccess; pages: { name: string; code: string }[] };
 
-export function ProjectPage() {
-  const { projectId = '', '*': tail = '' } = useParams();
+export function ProjectPage({
+  resolvedProjectId,
+  resolvedCode,
+}: { resolvedProjectId?: string; resolvedCode?: string } = {}) {
+  const params = useParams();
   const location = useLocation();
+  const projectId = resolvedProjectId ?? params.projectId ?? '';
+  const tail = resolvedCode ?? params['*'] ?? '';
 
   const [session, setSession] = useState<PlatformSession | null>();
   const [navigation, setNavigation] = useState<Navigation>();
@@ -81,35 +87,30 @@ export function ProjectPage() {
 
   if (!session) return <main className="screen-message">{error || 'Comprobando acceso…'}</main>;
 
+  const applicationPath = navigation?.project.slug
+    ? '/' + navigation.project.slug
+    : '/p/' + projectId;
+  if (!resolvedProjectId && navigation?.project.slug && page && !loading && !error) {
+    return (
+      <Navigate replace to={applicationPath + '/' + page.code + location.search + location.hash} />
+    );
+  }
+
   return (
     <>
-      <header className="runtime-header">
-        <strong>{navigation?.project.name ?? 'Aplicación'}</strong>
-        <nav aria-label="Páginas publicadas">
-          {navigation?.pages.map((p) => (
-            <Link
-              aria-current={
-                location.pathname === '/p/' + projectId + '/' + p.code ? 'page' : undefined
-              }
-              key={p.code}
-              to={'/p/' + projectId + '/' + p.code}
-              onClick={() => {
-                if (tail !== p.code) setLoading(true);
-              }}
-            >
-              {p.name}
-            </Link>
-          ))}
-        </nav>
-        <span>{session.user.name}</span>
-        <button
-          onClick={() =>
-            void platformRequest('/auth/logout', { method: 'POST' }).then(() => setSession(null))
-          }
-        >
-          Cerrar sesión
-        </button>
-      </header>
+      <RuntimeHeader
+        projectName={navigation?.project.name ?? 'Aplicación'}
+        applicationPath={applicationPath}
+        pages={navigation?.pages ?? []}
+        currentCode={page?.code ?? tail}
+        userName={session.user.name}
+        onNavigate={(code) => {
+          if (tail !== code) setLoading(true);
+        }}
+        onLogout={() =>
+          void platformRequest('/auth/logout', { method: 'POST' }).then(() => setSession(null))
+        }
+      />
 
       {loading ? (
         <main className="screen-message" role="status">
@@ -133,6 +134,7 @@ export function ProjectPage() {
         navigation && (
           <DataProvider
             key={page.id + ':' + page.publicationVersion}
+            applicationPath={applicationPath}
             projectId={projectId}
             entities={page.entities ?? []}
             operations={page.operations ?? []}
@@ -147,80 +149,5 @@ export function ProjectPage() {
         )
       )}
     </>
-  );
-}
-
-export function RuntimeLogin({ onLogin }: { onLogin: (s: PlatformSession) => void }) {
-  const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  async function login(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = Object.fromEntries(new FormData(event.currentTarget));
-    setBusy(true);
-    setError('');
-    try {
-      onLogin(
-        await platformRequest<PlatformSession>('/auth/login', {
-          method: 'POST',
-          body: JSON.stringify(data),
-        }),
-      );
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <main className="auth-screen">
-      <section className="auth-card">
-        <span className="runtime-brand">
-          <ShieldCheck size={21} /> AppBuilder.
-        </span>
-        <h1>Accede a tu aplicación</h1>
-        <p>
-          Tu equipo y tu información, en un solo lugar. Entra con la cuenta que tiene acceso a este
-          proyecto.
-        </p>
-        <form onSubmit={(e) => void login(e)}>
-          <label>
-            Correo
-            <input name="email" type="email" autoComplete="email" required />
-          </label>
-          <label>
-            Contraseña
-            <span className="runtime-password">
-              <input
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                required
-              />
-              <button
-                type="button"
-                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </span>
-          </label>
-          {error && (
-            <p role="alert" className="alert">
-              {error}
-            </p>
-          )}
-          <button className="primary" disabled={busy}>
-            {busy ? 'Entrando…' : 'Iniciar sesión'}
-          </button>
-        </form>
-        <small className="runtime-login-help">
-          ¿No tienes acceso? Pide al propietario que te invite con tu correo.
-        </small>
-      </section>
-    </main>
   );
 }
