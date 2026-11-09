@@ -1,3 +1,4 @@
+import { Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useEffect, useState, type FormEvent } from 'react';
 
 import { Link, useLocation, useParams } from 'react-router-dom';
@@ -148,9 +149,10 @@ export function ProjectPage() {
   );
 }
 
-function RuntimeLogin({ onLogin }: { onLogin: (s: PlatformSession) => void }) {
+export function RuntimeLogin({ onLogin }: { onLogin: (s: PlatformSession) => void }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function login(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -174,9 +176,14 @@ function RuntimeLogin({ onLogin }: { onLogin: (s: PlatformSession) => void }) {
   return (
     <main className="auth-screen">
       <section className="auth-card">
-        <small>APPBUILDERDEV</small>
+        <span className="runtime-brand">
+          <ShieldCheck size={21} /> AppBuilder.
+        </span>
         <h1>Accede a tu aplicación</h1>
-        <p>Utiliza la cuenta que tiene acceso a este proyecto.</p>
+        <p>
+          Tu equipo y tu información, en un solo lugar. Entra con la cuenta que tiene acceso a este
+          proyecto.
+        </p>
         <form onSubmit={(e) => void login(e)}>
           <label>
             Correo
@@ -184,7 +191,21 @@ function RuntimeLogin({ onLogin }: { onLogin: (s: PlatformSession) => void }) {
           </label>
           <label>
             Contraseña
-            <input name="password" type="password" autoComplete="current-password" required />
+            <span className="runtime-password">
+              <input
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </span>
           </label>
           {error && (
             <p role="alert" className="alert">
@@ -195,6 +216,9 @@ function RuntimeLogin({ onLogin }: { onLogin: (s: PlatformSession) => void }) {
             {busy ? 'Entrando…' : 'Iniciar sesión'}
           </button>
         </form>
+        <small className="runtime-login-help">
+          ¿No tienes acceso? Pide al propietario que te invite con tu correo.
+        </small>
       </section>
     </main>
   );

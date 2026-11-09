@@ -1,0 +1,141 @@
+/* Runtime chrome shares the editor's quiet neutral/violet design language. */
+.auth-screen {
+  background: #f7f8fc;
+  padding: 32px 20px;
+  min-height: 100dvh;
+}
+.auth-card {
+  border: 1px solid #e1e5ee;
+  border-radius: 12px;
+  padding: 36px;
+  box-shadow: 0 8px 32px #25334d08;
+  width: min(100%, 440px);
+  background: #fff;
+}
+.runtime-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #6352df;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.5px;
+  margin-bottom: 26px;
+}
+.auth-card h1 {
+  color: #202a3e;
+  font-size: 28px;
+  letter-spacing: -0.8px;
+  line-height: 1.2;
+}
+.auth-card > p {
+  color: #738098;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.auth-card form {
+  gap: 18px;
+}
+.auth-card input {
+  border: 1px solid #dbe1ed;
+  border-radius: 6px;
+  padding: 11px;
+}
+.auth-card input:focus {
+  border-color: #9183e8;
+  outline: 3px solid #6352df14;
+}
+.auth-card button.primary {
+  background: #6352df;
+  border-color: #6352df;
+  color: white;
+  border-radius: 6px;
+  padding: 12px;
+}
+.runtime-password {
+  display: flex;
+  position: relative;
+}
+.runtime-password input {
+  width: 100%;
+  padding-right: 44px;
+}
+.runtime-password button {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  bottom: 4px;
+  width: 34px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: #7c879b;
+}
+.runtime-login-help {
+  display: block;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #eceef4;
+  color: #7d889c;
+  line-height: 1.8;
+}
+.runtime-header {
+  background: white;
+  border-bottom: 1px solid #e0e5ee;
+  gap: 18px;
+  padding: 15px 24px;
+  min-height: 64px;
+  height: auto;
+  flex-wrap: wrap;
+}
+.runtime-header strong {
+  color: #263149;
+  font-size: 15px;
+}
+.runtime-header nav {
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.runtime-header a {
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #748098;
+  font-size: 13px;
+}
+.runtime-header a[aria-current='page'] {
+  background: #efedfc;
+  color: #6352df;
+}
+.runtime-header button {
+  border: 1px solid #dfe4ee;
+  border-radius: 6px;
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .auth-card {
+    padding: 26px 22px;
+  }
+  .runtime-header {
+    padding: 14px;
+    gap: 10px;
+  }
+  .runtime-header nav {
+    width: 100%;
+    order: 3;
+  }
+  .runtime-header > span {
+    display: none;
+  }
+  .runtime-header > button {
+    margin-left: auto;
+  }
+}
+
+.runtime-project-choice {
+  display: block;
+  padding: 14px;
+  border: 1px solid #e1e5ee;
+  border-radius: 6px;
+  color: #6352df;
+  text-align: left;
+}
