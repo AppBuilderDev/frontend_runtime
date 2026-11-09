@@ -136,6 +136,7 @@ export function ProjectPage() {
             projectId={projectId}
             entities={page.entities ?? []}
             operations={page.operations ?? []}
+            endpoints={page.endpoints ?? []}
             connections={page.connections ?? []}
             canWrite={navigation.project.role !== 'reader'}
           >
