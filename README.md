@@ -1,11 +1,24 @@
 # AppBuilderDev Runtime
 
-Frontend React, TypeScript y Vite independiente. Consume por HTTP la API NestJS del repositorio ../backend; no contiene servidor ni acceso directo a SQLite.
+Frontend React + TypeScript + Vite independiente. No contiene backend, acceso a SQLite ni imports de Design. Consume la API NestJS del repositorio ../backend.
 
-Usar Node 24. Instalar con npm ci, copiar .env.example a .env si no existe y ejecutar npm run dev. Disponible en http://localhost:5174. Iniciar tambien el backend (3001) y Design (5173). Mantener el mismo host en ambos frontends para compartir la sesion.
+```powershell
+npm ci
+Copy-Item .env.example .env
+npm run dev
+```
 
-PLATFORM_API_TARGET configura el proxy /api/v1. Las rutas /p/:projectId/* resuelven paginas publicadas por su codigo y requieren sesion/permisos. Un borrador no cambia Runtime.
+API: arrancar `npm run dev` en ../backend. Runtime: http://localhost:5174. Design: http://localhost:5173. Mantener el mismo host en ambos frontends para compartir la cookie HttpOnly. PLATFORM_API_TARGET configura el proxy /api/v1 hacia http://127.0.0.1:3001. Para hosting usar un proxy inverso equivalente y HTTPS.
 
-RestTable utiliza los contratos HTTP capturados en la publicacion: GET lista, POST crea, PUT/PATCH edita y DELETE desactiva registros. Las escrituras requieren permisos y revisiones vigentes. Se conservan los componentes DataForm, DataTable, DataDetail, Inventory, ServiceForm y ApiQuery.
+Las rutas /p/:projectId/* resuelven paginas publicadas mediante su codigo, con sesion y permisos del proyecto. Un borrador no cambia la publicacion. Se preservan los componentes DataForm/DataTable/DataDetail, Inventory, ServiceForm y ApiQuery. RestTable interpreta las rutas HTTP capturadas en la publicacion para listar con GET, crear con POST, editar con PUT/PATCH y desactivar con DELETE, con control de revisiones. La interfaz de lector no permite escrituras y el backend aplica permisos independientemente del navegador.
 
-Verificar con npm run build, npm run lint y npm test. Los recorridos conjuntos se ejecutan desde ../frontend_design con npm run test:e2e.
+src/builder-components.tsx permite renderizar los archivos Page.tsx exportados desde Design dentro del proyecto; los componentes conectados requieren el DataProvider correspondiente. El Runtime normal sigue interpretando el contrato JSON, no ejecuta TSX del usuario ni depende de Craft o Babel.
+
+```powershell
+npm run build
+npm run lint
+npm test
+npm run format:check
+```
+
+El recorrido conjunto se ejecuta desde ../frontend_design con `npm run test:e2e`. No hay dependencias locales entre paquetes. Los contratos equivalentes deben evolucionar coordinadamente hasta extraer un paquete privado versionado. Ver docs/contract.md.
